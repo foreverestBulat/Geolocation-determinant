@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 class IPLocation(BaseModel):
-    start: int
-    end: int
+    start: str
+    end: str
     country_code: str

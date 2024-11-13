@@ -17,7 +17,7 @@ class MongoDBClient:
                 self.config['database_url']
             )
 
-        return self.client[self.config['db_name']]
+        return self.client
 
     def get_collection(self, collection_name):
         client = self.create_connection()
@@ -27,5 +27,10 @@ class MongoDBClient:
 
 def get_db():
     factory = MongoDBClient()
-    collection = factory.get_collection('ips')
+    # collection = factory.get_collection('ips')
+    client = factory.create_connection()
+    db = client.get_database('save_ips')
+    collection = db.get_collection('ips')
+    print(type(collection))
     return collection
+    # return collectio

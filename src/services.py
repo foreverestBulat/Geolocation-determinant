@@ -1,22 +1,31 @@
-import asyncio
-from fastapi import Depends
-import requests
-import pandas as pd
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from models import IPLocation   
-from pymongo.collection import Collection
+import pandas
+from motor.motor_asyncio import AsyncIOMotorCollection
 
-from git import Repo
-
-from persistence import get_db
 
 class DataPullingService:
-    async def __init__(self, url: str, db: Collection = Depends(get_db)):
-        self.repo_url = url
+    def __init__(self, db: AsyncIOMotorCollection):
+        self.urls_csv = ['https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-geo-whois-asn-country/geolite2-geo-whois-asn-country-ipv4.csv']
         self.db = db
     
-    async def clone_repo(self):
-        pass
-    
     async def pulling_task(self):
-        pass
+        print('start task')
+        for url in self.urls_csv:
+            df = pandas.read_csv(url)
+            for index, row in df.iterrows():
+                start = row[df.columns[0]]
+                end = row[df.columns[1]]
+                country_code = row[df.columns[2]]
+
+                existing_document = await self.db.find_one({'start': start, 'end': end})
+
+                if existing_document:
+                    await self.db.update_one(
+                        {'start': start, 'end': end},
+                        {'$set': {'country_code': country_code}}
+                    )
+                else:
+                    await self.db.insert_one({
+                        'start': start,
+                        'end': end,
+                        'country_code': country_code
+                    })
