@@ -31,5 +31,6 @@ CSV_FILES_URLS = [
 'https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/asn-country/asn-country-ipv6.csv', 'https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-geo-whois-asn-country/geolite2-geo-whois-asn-country-ipv4.csv'
 ]
 ```
+ТАКЖЕ в main.py в строке 15 уберите значение 1000, чтобы было `await service.pulling_task()`, это ограничение сколько строк записать в бд
 
 - `fastapi dev src/main.py`
