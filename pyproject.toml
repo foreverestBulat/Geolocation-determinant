@@ -7,6 +7,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+fastapi = {extras = ["standard"], version = "^0.115.5"}
+apscheduler = "^3.10.4"
+motor = "^3.6.0"
+pydantic = "^2.9.2"
+asyncio = "^3.4.3"
+pandas = "^2.2.3"
+geocoder = "^1.38.1"
+gitpython = "^3.1.43"
 
 
 [build-system]
