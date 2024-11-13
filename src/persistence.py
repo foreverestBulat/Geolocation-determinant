@@ -1,13 +1,11 @@
-from typing import Any
-from fastapi import Depends, FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
-
+from config import MONGODB, MONGODB_URL
 
 class MongoDBClient:
     def __init__(self, config = None):
         self.config = {
-            'database_url': 'mongodb://localhost:27017',
-            'db_name': 'save_ip'
+            'database_url': MONGODB_URL,
+            'db_name': MONGODB['NAME']
         }
         self.client = None
 
@@ -27,10 +25,7 @@ class MongoDBClient:
 
 def get_db():
     factory = MongoDBClient()
-    # collection = factory.get_collection('ips')
     client = factory.create_connection()
     db = client.get_database('save_ips')
     collection = db.get_collection('ips')
-    print(type(collection))
     return collection
-    # return collectio

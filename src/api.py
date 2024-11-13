@@ -1,16 +1,9 @@
-import asyncio
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-import geocoder
-from fastapi import FastAPI, Depends
-
 import ipaddress
-
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import asyncio
+from fastapi import FastAPI, Depends
 from motor.motor_asyncio import AsyncIOMotorCollection
-from apscheduler.triggers.interval import IntervalTrigger
-from persistence import MongoDBClient, get_db
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from persistence import get_db
 from services import DataPullingService
 
 app = FastAPI()
@@ -21,22 +14,24 @@ scheduler.start()
 async def startup_event():
     db = get_db()
     service = DataPullingService(db)
+    await service.pulling_task()
+    # asyncio.create_task(service.pulling_task()) # чтобы начать сразу заполнять
     scheduler.add_job(service.pulling_task, 'interval', hours=1)
-
 
 @app.get('/api/country/{ip_address}')
 async def get_country(ip_address: str, db: AsyncIOMotorCollection = Depends(get_db)):
-    ip_int = int(ipaddress.ip_address(ip_address))
+    ip_address_int = int.from_bytes(ipaddress.ip_address(ip_address).packed, byteorder='big')
     
-    documents = await db.find().to_list(length=None)
+    result = await db.find_one({
+        'start': {
+            '$lte': ip_address_int
+        },
+        'end': {
+            '$gte': ip_address_int
+        }
+    })
     
-    for document in documents:
-        start_ip = ipaddress.ip_address(document["start"])
-        end_ip = ipaddress.ip_address(document["end"])
-        
-        start_int = int(start_ip)
-        end_int = int(end_ip)
-
-        if start_int <= ip_int <= end_int:
-            return document["country_code"]
+    if result is not None:
+        return result['country_code']
+    
     return None
