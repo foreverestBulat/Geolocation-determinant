@@ -2,17 +2,18 @@ import pandas
 import socket
 import ipaddress
 from motor.motor_asyncio import AsyncIOMotorCollection
-
+from config import CSV_FILES_URLS
 
 class DataPullingService:
     def __init__(self, db: AsyncIOMotorCollection):
-        self.urls_csv = ['https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-geo-whois-asn-country/geolite2-geo-whois-asn-country-ipv4.csv']
+        self.urls_csv = CSV_FILES_URLS
         self.db = db
     
-    async def pulling_task(self):
-        print('Start Pilling Service')
+    async def pulling_task(self, count_rows_loaded = 0):
+        print('Start Pulling Service')
         for url in self.urls_csv:
             df = pandas.read_csv(url)
+            print(url)
             for index, row in df.iterrows():
                 start = row[df.columns[0]]
                 end = row[df.columns[1]]
@@ -45,3 +46,6 @@ class DataPullingService:
                         'end': int.from_bytes(ipaddress.ip_address(end).packed, byteorder='big'),
                         'country_code': country_code
                     })
+                if count_rows_loaded != 0 and index == count_rows_loaded:
+                    break
+                

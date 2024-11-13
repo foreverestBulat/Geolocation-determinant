@@ -9,12 +9,14 @@ class MongoDBClient:
         }
         self.client = None
 
-    def create_connection(self):
+    async def create_connection(self):
         if self.client is None:
             self.client = AsyncIOMotorClient(
                 self.config['database_url']
             )
-
+            db_list = await self.client.list_database_names()
+            if self.config['db_name'] not in db_list:
+                self.client[self.config['db_name']]
         return self.client
 
     def get_collection(self, collection_name):
@@ -23,9 +25,9 @@ class MongoDBClient:
         return db
     
 
-def get_db():
+async def get_db():
     factory = MongoDBClient()
-    client = factory.create_connection()
+    client = await factory.create_connection()
     db = client.get_database('save_ips')
     collection = db.get_collection('ips')
     return collection
