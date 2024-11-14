@@ -15,5 +15,7 @@ DATABASES = {
 
 MONGODB = DATABASES['MongoDB']
 MONGODB_URL = f'mongodb://{MONGODB['USER']}:{MONGODB['PASSWORD']}@{MONGODB['HOST']}:{MONGODB['PORT']}'
+# MONGODB_URL = f'mongodb://{MONGODB['HOST']}:{MONGODB['PORT']}'
 
-CSV_FILES_URLS = ['https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-geo-whois-asn-country/geolite2-geo-whois-asn-country-ipv4.csv']
+CSV_FILES_URLS = ['https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-geo-whois-asn-country/geolite2-geo-whois-asn-country-ipv6.csv']
+# CSV_FILES_URLS = ['https://raw.githubusercontent.com/sapics/ip-location-db/refs/heads/main/geolite2-geo-whois-asn-country/geolite2-geo-whois-asn-country-ipv4.csv']

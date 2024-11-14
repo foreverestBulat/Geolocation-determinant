@@ -5,6 +5,7 @@
 ## Docker
 - `docker compose build`
 - `docker compose up`
+- `http://0.0.0.0:8000`
 
 ## Настройка проекта
 .env
@@ -33,4 +34,3 @@ CSV_FILES_URLS = [
 ```
 ТАКЖЕ в main.py в строке 15 уберите значение 1000, чтобы было `await service.pulling_task()`, это ограничение сколько строк записать в бд
 
-- `fastapi dev src/main.py`

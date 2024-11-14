@@ -12,7 +12,7 @@ scheduler.start()
 async def startup_event():
     db = await get_db()
     service = DataPullingService(db)
-    await service.pulling_task(1000)
+    await service.fill_data_from_uploaded(1000)
     scheduler.add_job(service.pulling_task, 'interval', hours=1)
 
 app.include_router(router)

@@ -3,10 +3,11 @@ from config import MONGODB, MONGODB_URL
 
 class MongoDBClient:
     def __init__(self, config = None):
-        self.config = {
-            'database_url': MONGODB_URL,
-            'db_name': MONGODB['NAME']
-        }
+        if config is None:
+            self.config = {
+                'database_url': MONGODB_URL,
+                'db_name': MONGODB['NAME']
+            }
         self.client = None
 
     async def create_connection(self):
